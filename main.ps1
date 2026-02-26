@@ -1,39 +1,21 @@
-# -----------------------------
-# Chrome Remote Desktop + Chrome Kurulum Script
-# -----------------------------
-
-# TLS 1.2 kullanımı
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
-# Firewall kapatma (opsiyonel)
 Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
 
-# Geçici dosya yolları
 $CRDInstaller = "$env:TEMP\chromeremotedesktophost.msi"
 $ChromeInstaller = "$env:TEMP\chrome_installer.exe"
 
-# -----------------------------
-# 1️⃣ Chrome Remote Desktop Host İndir ve Kur
-# -----------------------------
 Write-Output "📥 Chrome Remote Desktop indiriliyor..."
 Start-BitsTransfer -Source "https://dl.google.com/edgedl/chrome-remote-desktop/chromeremotedesktophost.msi" -Destination $CRDInstaller
 
 Write-Output "⚙️ Chrome Remote Desktop kuruluyor..."
-Start-Process -FilePath $CRDInstaller -Wait
-
-# İndirme dosyasını temizle
+Start-Process -FilePath $CRDInstaller -ArgumentList "/quiet /norestart" -Verb RunAs -Wait
 Remove-Item $CRDInstaller -Force
 
-# -----------------------------
-# 2️⃣ Google Chrome İndir ve Kur
-# -----------------------------
 Write-Output "📥 Google Chrome indiriliyor..."
 Start-BitsTransfer -Source "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -Destination $ChromeInstaller
 
 Write-Output "⚙️ Google Chrome kuruluyor..."
-Start-Process -FilePath $ChromeInstaller -ArgumentList "/install" -Verb RunAs -Wait
-
-# İndirme dosyasını temizle
+Start-Process -FilePath $ChromeInstaller -ArgumentList "/silent /install" -Verb RunAs -Wait
 Remove-Item $ChromeInstaller -Force
 
 Write-Output "✅ Kurulum tamamlandı!"
